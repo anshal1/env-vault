@@ -4,13 +4,16 @@ import { Navbar } from "@/components/navbar";
 import { RetrieveScreens } from "@/components/retrieve-screens";
 import { StoreScreen } from "@/components/store-screen";
 import { VaultScreen } from "@/components/vault-screen";
+import { getCurrentUser } from "./actions/user";
 
-export default function Page() {
+export default async function Page() {
+  const user = await getCurrentUser();
+
   return (
     <main className="min-h-screen bg-[#080d0c] text-zinc-100 selection:bg-emerald-400/20">
-      <Navbar />
+      <Navbar user={user.data?.username ?? null} />
       <HomeScreen />
-      <StoreScreen />
+      <StoreScreen user={user.data?.username ?? null} />
       <VaultScreen />
       <RetrieveScreens />
       <Footer />

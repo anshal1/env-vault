@@ -3,12 +3,15 @@ import {
   CircleCheck,
   FileKey2,
   Lock,
+  Vault,
   X,
 } from "lucide-react";
 import { SectionLabel } from "./section-label";
 import { TextField } from "./text-field";
+import { User } from "@/app/db/schema/users";
+import Link from "next/link";
 
-export function StoreScreen() {
+export function StoreScreen({ user }: { user: User["username"] | null }) {
   return (
     <section
       id="store"
@@ -60,9 +63,20 @@ export function StoreScreen() {
               <CircleAlert className="size-3.5" /> Lose your secret key and the
               env cannot be recovered.
             </p>
-            <button className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-emerald-400 px-5 text-sm font-semibold text-[#07100d] transition hover:bg-emerald-300">
-              Encrypt &amp; Store <Lock className="size-4" />
-            </button>
+            {!user ? (
+              <Link
+                href={"/initiate"}
+                className="inline-flex h-11 items-center justify-center cursor-pointer"
+              >
+                <button className="w-full inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-emerald-400 px-5 text-sm font-semibold text-[#07100d] transition hover:bg-emerald-300">
+                  Create A Vault First <Vault className="size-4" />
+                </button>
+              </Link>
+            ) : (
+              <button className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-emerald-400 px-5 text-sm font-semibold text-[#07100d] transition hover:bg-emerald-300">
+                Encrypt &amp; Store <Lock className="size-4" />
+              </button>
+            )}
           </div>
         </div>
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
