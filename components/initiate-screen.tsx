@@ -44,6 +44,7 @@ export function InitiateScreen() {
 
     if (res.data) {
       setCookie("token", res.data.token);
+      window.location.reload();
     }
   };
 
