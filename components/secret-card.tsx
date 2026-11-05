@@ -13,12 +13,14 @@ export function SecretCard({
     color,
     env,
     id,
+    hint,
 }: {
     name: string;
     created_at: Date | null;
     color: string;
     env: string;
     id: number;
+    hint: string | null;
 }) {
     const [showModal, setShowModal] = useState(false);
     return (
@@ -30,7 +32,7 @@ export function SecretCard({
                         setShowModal(false);
                     }}
                 >
-                    <RetrieveScreens title={name} env={env} />
+                    <RetrieveScreens hint={hint} title={name} env={env} />
                 </Modal>
             ) : null}
 

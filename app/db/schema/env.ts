@@ -7,6 +7,7 @@ export const Env = pgTable("env", {
     id: serial("id").primaryKey(),
     label: text("label").notNull(),
     created_at: timestamp("created_at").defaultNow(),
+    hint: text("hint"),
 });
 export type EnvType = typeof Env.$inferSelect;
 export type EnvInsert = typeof Env.$inferInsert;

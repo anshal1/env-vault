@@ -69,6 +69,7 @@ export async function VaultScreen({
                 <div className="mt-8 grid gap-4 md:grid-cols-3">
                     {envs.data?.envs.map((secret) => (
                         <SecretCard
+                            hint={secret.hint}
                             id={secret.id}
                             key={secret.label}
                             name={secret.label}

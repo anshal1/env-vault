@@ -8,12 +8,12 @@ import { revalidatePath } from "next/cache";
 
 export async function saveEnv(env: EnvInsert) {
     return trycatchAction(async () => {
+        if (!env.env || !env.label)
+            throw new ApiError("Env label and env are required", 400);
         const user = await getCurrentUser();
         if (!user.data) {
             throw new ApiError("Vault not found", 404);
         }
-        if (!env.env || !env.label)
-            throw new ApiError("Env label and env are required", 400);
 
         const savedEnv = (
             await db
@@ -39,6 +39,7 @@ export async function getUserEnv(page: number, query?: string) {
                 label: Env.label,
                 created_at: Env.created_at,
                 id: Env.id,
+                hint: Env.hint,
             })
             .from(Env)
             .where(

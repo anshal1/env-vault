@@ -32,6 +32,7 @@ export function StoreScreen({ user }: { user: User["username"] | null }) {
             label: string;
             secret: string;
             "confirm-secret": string;
+            hint: string;
         };
         if (data["confirm-secret"] !== data.secret)
             return setApiState((pre) => ({
@@ -46,7 +47,11 @@ export function StoreScreen({ user }: { user: User["username"] | null }) {
                 };
             });
             const hash = await sign(data.env, data["confirm-secret"]);
-            const savedEnv = await saveEnv({ env: hash, label: data.label });
+            const savedEnv = await saveEnv({
+                env: hash,
+                label: data.label,
+                hint: data.hint,
+            });
             if (savedEnv.err?.message) {
                 setApiState(() => {
                     return {
@@ -106,6 +111,13 @@ export function StoreScreen({ user }: { user: User["username"] | null }) {
                             name="label"
                             disabled={apiState.loading}
                         />
+                        <TextField
+                            label="Hint for secret key (Optional)"
+                            placeholder="My pets name combined in a random order"
+                            name="hint"
+                            disabled={apiState.loading}
+                        />
+
                         <label className="flex flex-col gap-2 text-sm font-medium text-zinc-300">
                             Environment variables
                             <textarea

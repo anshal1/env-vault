@@ -11,9 +11,11 @@ import Error from "./error";
 export function RetrieveScreens({
     title,
     env,
+    hint,
 }: {
     title: string;
     env: string;
+    hint: string | null;
 }) {
     const [decodedEnv, setDecodedEnv] = useState("");
     const [error, setError] = useState("");
@@ -52,6 +54,10 @@ export function RetrieveScreens({
                     </h2>
                     <p className="mt-2 text-sm leading-6 text-zinc-500">
                         Enter the secret key you created for this environment.
+                    </p>
+
+                    <p className=" text-sm font-medium leading-6 text-primary">
+                        Hint = {hint ?? "No hint for this env"}
                     </p>
                     <form
                         className="mt-7 flex flex-col gap-4"
