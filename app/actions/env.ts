@@ -4,6 +4,7 @@ import { Env, EnvInsert } from "../db/schema/env";
 import { getCurrentUser } from "./user";
 import { db } from "../db";
 import { and, eq, ilike } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export async function saveEnv(env: EnvInsert) {
     return trycatchAction(async () => {
@@ -21,6 +22,7 @@ export async function saveEnv(env: EnvInsert) {
                 .returning({ id: Env.id })
         )[0];
         if (!savedEnv) throw new ApiError("Unable to save the env", 500);
+        revalidatePath("/");
         return { id: savedEnv.id };
     });
 }
@@ -36,6 +38,7 @@ export async function getUserEnv(page: number, query?: string) {
                 env: Env.env,
                 label: Env.label,
                 created_at: Env.created_at,
+                id: Env.id,
             })
             .from(Env)
             .where(

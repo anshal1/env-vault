@@ -1,7 +1,6 @@
 import { Footer } from "@/components/footer";
 import { HomeScreen } from "@/components/home-screen";
 import { Navbar } from "@/components/navbar";
-import { RetrieveScreens } from "@/components/retrieve-screens";
 import { StoreScreen } from "@/components/store-screen";
 import { VaultScreen } from "@/components/vault-screen";
 import { getCurrentUser } from "./actions/user";
@@ -29,7 +28,6 @@ export default async function Page({
             <Suspense fallback={<Loader />}>
                 <VaultScreen page={page} query={query} />
             </Suspense>
-            <RetrieveScreens />
             <Suspense>
                 <Footer />
             </Suspense>
