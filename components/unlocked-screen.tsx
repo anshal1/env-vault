@@ -22,6 +22,7 @@ export default function UnlockedScreen({
             return obj;
         }
         for (let i = 0; i < split.length; i++) {
+            if (split[i].length < 3) continue;
             const key_val = split[i].split("=");
             if (key_val.length < 2) {
                 obj[key_val[0]] = "";

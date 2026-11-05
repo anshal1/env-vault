@@ -53,3 +53,21 @@ export async function getUserEnv(page: number, query?: string) {
         return { envs: envs.slice(0, LIMIT), isNextPage: envs.length > LIMIT };
     });
 }
+
+export async function deleteEnv(envId: number) {
+    return trycatchAction(async () => {
+        const user = await getCurrentUser();
+        if (!user.data?.id) {
+            throw new ApiError("Vault not found", 404);
+        }
+        const result = await db
+            .delete(Env)
+            .where(and(eq(Env.id, envId), eq(Env.vault, user.data.id)))
+            .returning({ id: Env.id });
+        if (result.length === 0) {
+            throw new ApiError("Environment not found", 404);
+        }
+        revalidatePath("/");
+        return { success: true };
+    });
+}

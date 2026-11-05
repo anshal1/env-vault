@@ -38,6 +38,7 @@ export function StoreScreen({ user }: { user: User["username"] | null }) {
             return setApiState((pre) => ({
                 ...pre,
                 error: "Secret key do not match",
+                success: "",
             }));
         try {
             setApiState((prev) => {
