@@ -1,9 +1,10 @@
-import { Cloud, Plus, Search } from "lucide-react";
+import { ArrowLeft, ArrowRight, Cloud, Plus, Search } from "lucide-react";
 import { SectionLabel } from "./section-label";
 import { SecretCard } from "./secret-card";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { getUserEnv } from "@/app/actions/env";
+import SearchInput from "./search-input";
 
 const secrets = [
     {
@@ -29,8 +30,14 @@ const colors = [
     "bg-amber-400/10 text-amber-400",
 ];
 
-export async function VaultScreen() {
-    const envs = await getUserEnv(1);
+export async function VaultScreen({
+    page,
+    query,
+}: {
+    page: string;
+    query: string;
+}) {
+    const envs = await getUserEnv(Number(page ?? 1), query);
     return (
         <section
             id="vault"
@@ -44,21 +51,12 @@ export async function VaultScreen() {
                             Saved secrets
                         </h2>
                         <p className="mt-2 text-sm text-zinc-500">
-                            3 encrypted entries, only accessible with your keys.
+                            {envs.data?.envs.length} encrypted entries, only
+                            accessible with your keys.
                         </p>
                     </div>
                     <div className="flex gap-3">
-                        <label className="relative flex-1 sm:w-56">
-                            <Search
-                                aria-hidden="true"
-                                className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-600"
-                            />
-                            <input
-                                aria-label="Search secrets"
-                                placeholder="Search secrets..."
-                                className="h-10 w-full rounded-lg border border-white/10 bg-[#0d1513] pl-9 pr-3 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-emerald-400/60"
-                            />
-                        </label>
+                        <SearchInput />
                         <a
                             href="#store"
                             className="inline-flex h-10 items-center gap-2 rounded-lg bg-emerald-400 px-3.5 text-sm font-semibold text-[#07100d]"
@@ -85,29 +83,50 @@ export async function VaultScreen() {
                         />
                     ))}
                 </div>
-                <section className="flex items-center justify-center mt-3">
-                    <Link
-                        href={"?page=2"}
-                        className="block cursor-pointer"
-                        scroll={false}
-                    >
-                        <Button className={"h-11 cursor-pointer"}>
-                            Load More
-                        </Button>
-                    </Link>
-                </section>
-                <div className="mt-20 rounded-xl border border-dashed border-white/10 bg-white/[0.015] px-6 py-12 text-center">
-                    <div className="mx-auto flex size-12 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-zinc-600">
-                        <Cloud className="size-5" />
+
+                {!envs.data?.envs.length ? (
+                    <div className="mt-8 rounded-xl border border-dashed border-white/10 bg-white/[0.015] px-6 py-12 text-center">
+                        <div className="mx-auto flex size-12 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-zinc-600">
+                            <Cloud className="size-5" />
+                        </div>
+                        <h3 className="mt-4 text-sm font-medium text-zinc-300">
+                            No secrets stored yet
+                        </h3>
+                        <p className="mx-auto mt-1.5 max-w-xs text-xs leading-5 text-zinc-600">
+                            Your empty vault will look like this before your
+                            first secret is added.
+                        </p>
                     </div>
-                    <h3 className="mt-4 text-sm font-medium text-zinc-300">
-                        No secrets stored yet
-                    </h3>
-                    <p className="mx-auto mt-1.5 max-w-xs text-xs leading-5 text-zinc-600">
-                        Your empty vault will look like this before your first
-                        secret is added.
-                    </p>
-                </div>
+                ) : null}
+                {envs.data?.isNextPage ? (
+                    <div className="mt-8">
+                        {envs.data?.envs.length ? (
+                            <section className="flex items-center justify-center mt-3">
+                                <Link
+                                    href={`?page=${Number(page ?? 0) + 1}&query=${query}`}
+                                    className="block cursor-pointer"
+                                    scroll={false}
+                                >
+                                    <Button className={"h-11 cursor-pointer"}>
+                                        Load More <ArrowRight />
+                                    </Button>
+                                </Link>
+                            </section>
+                        ) : (
+                            <section className="flex items-center justify-center mt-3">
+                                <Link
+                                    href={`?page=${Number(page ?? 2) - 1}&query=${query}`}
+                                    className="block cursor-pointer"
+                                    scroll={false}
+                                >
+                                    <Button className={"h-11 cursor-pointer"}>
+                                        <ArrowLeft /> Go Back
+                                    </Button>
+                                </Link>
+                            </section>
+                        )}
+                    </div>
+                ) : null}
             </div>
         </section>
     );

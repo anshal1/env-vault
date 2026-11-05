@@ -3,7 +3,7 @@ import { ApiError, trycatchAction } from "@/lib/server-utils";
 import { Env, EnvInsert } from "../db/schema/env";
 import { getCurrentUser } from "./user";
 import { db } from "../db";
-import { eq } from "drizzle-orm";
+import { and, eq, ilike } from "drizzle-orm";
 
 export async function saveEnv(env: EnvInsert) {
     return trycatchAction(async () => {
@@ -25,12 +25,12 @@ export async function saveEnv(env: EnvInsert) {
     });
 }
 
-export async function getUserEnv(page: number) {
+export async function getUserEnv(page: number, query?: string) {
     return trycatchAction(async () => {
         if (page <= 0) throw new ApiError("Invalid page number", 400);
-        const LIMIT = 5;
+        const LIMIT = 6;
         const user = await getCurrentUser();
-        if (!user.data?.id) return { envs: [] };
+        if (!user.data?.id) return { envs: [], isNextPage: false };
         const envs = await db
             .select({
                 env: Env.env,
@@ -38,9 +38,14 @@ export async function getUserEnv(page: number) {
                 created_at: Env.created_at,
             })
             .from(Env)
-            .where(eq(Env.vault, user.data.id))
-            .limit(LIMIT)
+            .where(
+                and(
+                    eq(Env.vault, user.data.id),
+                    ilike(Env.label, `%${query ?? ""}%`),
+                ),
+            )
+            .limit(LIMIT + 1)
             .offset(LIMIT * (page - 1));
-        return { envs };
+        return { envs: envs.slice(0, LIMIT), isNextPage: envs.length > LIMIT };
     });
 }
