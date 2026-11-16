@@ -54,7 +54,7 @@ EnvVault is a professional, security-focused vault for storing and managing envi
    Create a `.env` file in the root directory and add the following:
 
     ```env
-    DATABASE_URL=postgres://user:password@localhost:5432/envvault
+    DB=postgres://user:password@localhost:5432/envvault
     # for authenticating a user
     SECRET=your_super_secret_jwt_key
     ```
